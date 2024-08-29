@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel.Syndication;
+using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Linq;
+using Humanizer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Elfie.Serialization;
 using Microsoft.EntityFrameworkCore;
 using TorrentRssFeed.Data;
 
@@ -75,8 +81,13 @@ namespace TorrentRssFeed.Controllers
         // POST: api/Torrents
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Torrent>> PostTorrent(Torrent torrent)
+        public async Task<ActionResult<Torrent>> PostTorrent(CreateTorrentDto createdTorrentDto)
         {
+            var torrent = new Torrent()
+            {
+                Name = createdTorrentDto.Name,
+                MagnetUrl = createdTorrentDto.Url
+            };
             _context.Torrent.Add(torrent);
             await _context.SaveChangesAsync();
 
@@ -98,6 +109,48 @@ namespace TorrentRssFeed.Controllers
 
             return NoContent();
         }
+        [HttpGet("rss")]
+        public async Task<string> GetRssFeed()
+        {
+			SyndicationFeed feed = new SyndicationFeed("Torrent Feed", "This is a torrent feed", new Uri("https://torrentrssfeed.azurewebsites.net"));
+			feed.Authors.Add(new SyndicationPerson("harsha.jediknight@gmail.com"));
+			feed.Categories.Add(new SyndicationCategory("Torrent"));
+			feed.Description = new TextSyndicationContent("Dummy");
+
+			var items = new List<SyndicationItem>();
+
+			var torrents = await _context.Torrent.ToListAsync();
+
+			foreach (var torrent in torrents)
+            {
+                var item = new SyndicationItem(
+                    torrent.Name,
+                    torrent.MagnetUrl,
+					new Uri("http://localhost/Content/One"),
+                    torrent.Id.ToString(),
+                    DateTime.Now
+				);
+                item.ElementExtensions.Add(
+                    new XElement(
+                        "enclosure",
+                            new XAttribute("type", "application/x-bittorrent"),
+                            new XAttribute("url", torrent.MagnetUrl)
+                    )
+                );
+                items.Add(item);
+            }
+
+            feed.Items = items;
+			var formatter = new Rss20FeedFormatter(feed);
+			var output = new StringBuilder();
+			using (var writer = XmlWriter.Create(output, new XmlWriterSettings { Indent = true, OmitXmlDeclaration = true }))
+			{
+				formatter.WriteTo(writer);
+				writer.Flush();
+			}
+
+			return output.ToString();
+		}
 
         private bool TorrentExists(int id)
         {
