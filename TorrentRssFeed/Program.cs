@@ -16,6 +16,7 @@ builder.Services.AddDbContext<TorrentRssFeedDbContext>(options =>
 
 var app = builder.Build();
 
+app.UseCors(builder => builder.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
