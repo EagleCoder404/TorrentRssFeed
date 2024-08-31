@@ -47,37 +47,6 @@ namespace TorrentRssFeed.Controllers
             return torrent;
         }
 
-        // PUT: api/Torrents/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTorrent(int id, Torrent torrent)
-        {
-            if (id != torrent.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(torrent).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TorrentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/Torrents
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -109,38 +78,20 @@ namespace TorrentRssFeed.Controllers
 
             return NoContent();
         }
-        [HttpGet("rss")]
+
+		[HttpPost("clear")]
+		public async Task<IActionResult> ClearTorrents()
+		{
+			await _context.Database.ExecuteSqlRawAsync("TRUNCATE TABLE dbo.Torrent");
+			return NoContent();
+		}
+
+		[HttpGet("rss")]
         public async Task<string> GetRssFeed()
         {
-			SyndicationFeed feed = new SyndicationFeed("Torrent Feed", "This is a torrent feed", new Uri("https://torrentrssfeed.azurewebsites.net"));
-			feed.Authors.Add(new SyndicationPerson("harsha.jediknight@gmail.com"));
-			feed.Categories.Add(new SyndicationCategory("Torrent"));
-			feed.Description = new TextSyndicationContent("Dummy");
-
-			var items = new List<SyndicationItem>();
-
 			var torrents = await _context.Torrent.ToListAsync();
+            var feed = Utils.GetSyndicationFeedFromTorrentList(torrents);
 
-			foreach (var torrent in torrents)
-            {
-                var item = new SyndicationItem(
-                    torrent.Name,
-                    torrent.MagnetUrl,
-					new Uri("http://localhost/Content/One"),
-                    torrent.Id.ToString(),
-                    DateTime.Now
-				);
-                item.ElementExtensions.Add(
-                    new XElement(
-                        "enclosure",
-                            new XAttribute("type", "application/x-bittorrent"),
-                            new XAttribute("url", torrent.MagnetUrl)
-                    )
-                );
-                items.Add(item);
-            }
-
-            feed.Items = items;
 			var formatter = new Rss20FeedFormatter(feed);
 			var output = new StringBuilder();
 			using (var writer = XmlWriter.Create(output, new XmlWriterSettings { Indent = true, OmitXmlDeclaration = true }))

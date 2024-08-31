@@ -12,7 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<TorrentRssFeedDbContext>(options =>
-	options.UseSqlServer(builder.Configuration.GetConnectionString("AzureTestDb")));
+	options.UseSqlServer(builder.Configuration.GetConnectionString("Database")));
 
 var app = builder.Build();
 
