@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TorrentRssFeed.Data;
 
@@ -11,9 +12,11 @@ using TorrentRssFeed.Data;
 namespace TorrentRssFeed.Migrations
 {
     [DbContext(typeof(TorrentRssFeedDbContext))]
-    partial class TorrentRssFeedDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240902094548_UserUpdate")]
+    partial class UserUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

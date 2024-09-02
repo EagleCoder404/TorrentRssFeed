@@ -7,14 +7,17 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.Elfie.Serialization;
 using Microsoft.EntityFrameworkCore;
 using TorrentRssFeed.Data;
+using TorrentRssFeed.DTO;
 
 namespace TorrentRssFeed.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TorrentsController : ControllerBase
