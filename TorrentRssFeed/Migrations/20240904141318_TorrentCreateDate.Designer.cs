@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TorrentRssFeed.Data;
 
@@ -11,9 +12,11 @@ using TorrentRssFeed.Data;
 namespace TorrentRssFeed.Migrations
 {
     [DbContext(typeof(TorrentRssFeedDbContext))]
-    partial class TorrentRssFeedDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240904141318_TorrentCreateDate")]
+    partial class TorrentCreateDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -246,7 +249,7 @@ namespace TorrentRssFeed.Migrations
 
                     b.HasIndex("TorrentListId");
 
-                    b.ToTable("Torrent", (string)null);
+                    b.ToTable("Torrent");
                 });
 
             modelBuilder.Entity("TorrentRssFeed.Data.TorrentList", b =>
@@ -268,7 +271,7 @@ namespace TorrentRssFeed.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.ToTable("TorrentList", (string)null);
+                    b.ToTable("TorrentList");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

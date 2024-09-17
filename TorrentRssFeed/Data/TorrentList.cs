@@ -6,5 +6,6 @@
 		public string Name { get; set; }
 
 		public ICollection<Torrent> Torrents { get; set; }
+		public AppUser AppUser { get; set; }
 	}
 }

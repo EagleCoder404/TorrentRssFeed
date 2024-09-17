@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.General;
 using System;
+using TorrentRssFeed.Data;
 
 namespace TorrentRssFeed.Data
 {
@@ -14,5 +15,6 @@ namespace TorrentRssFeed.Data
 		}
 
 		public DbSet<Torrent> Torrent { get; set; }
+	    public DbSet<TorrentList> TorrentList { get; set; } = default!;
 	}
 }

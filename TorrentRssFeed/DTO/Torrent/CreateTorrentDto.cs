@@ -1,4 +1,4 @@
-﻿namespace TorrentRssFeed.DTO
+﻿namespace TorrentRssFeed.DTO.Torrent
 {
     public class CreateTorrentDto
     {

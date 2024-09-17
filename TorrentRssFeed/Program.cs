@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TorrentRssFeed.Data;
+using TorrentRssFeed.Services;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<TorrentRssFeedDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("Database")));
+
+builder.Services.AddScoped<TorrentListService>();
+
 
 var app = builder.Build();
 
